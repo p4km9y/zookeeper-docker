@@ -7,7 +7,7 @@
 # docker images | grep none | tr -s [[:space:]] | cut -d\  -f3 | xargs docker rmi -f
 
 # leader
-docker run --net=host --name z1 p4km9y/zookeeper 1
+docker run --net=host --name z1 p4km9y/zookeeper 
 
 # members
 ip=`docker inspect z1 | sed -n 's/^\(.*"IPAddress"\s*:\s*"\(.\+\)".*\)$/\2/p' | uniq`
