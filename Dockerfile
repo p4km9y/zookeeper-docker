@@ -36,4 +36,3 @@ USER zookeeper
 EXPOSE 2181 2888 3888 9010 8080
 
 CMD ["/opt/zookeeper/bin/zk-init.sh"]
-
