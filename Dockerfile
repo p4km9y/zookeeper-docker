@@ -10,17 +10,18 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV ZK_LEADER ""
 ENV ZK_SLEEP 0
 
-# >= zookeeper-3.5.1-alpha, might be "current" once
-RUN current=http://www.apache.org/dist/zookeeper/zookeeper-3.5.1-alpha && \
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y dnsutils
+
+# >= zookeeper-3.5.2-alpha, might be "current" once
+RUN current=http://www.apache.org/dist/zookeeper/zookeeper-3.5.2-alpha && \
     ref=`wget -qO - ${current} | sed -n 's/.*href="\(.*zookeeper-.*\..*gz\)".*/\1/p'` && \
     wget -O - ${current}/${ref} | gzip -dc | tar x -C /opt/ -f - && \
     dir=`ls /opt | grep zookeeper` && \
     ln -s /opt/${dir} /opt/zookeeper && \
     mkdir -p /opt/zookeeper/data && \
     mkdir -p /opt/zookeeper/log
-
-COPY zk-init.sh /opt/zookeeper/bin/
-COPY wait-for-it.sh /
 
 RUN adduser --no-create-home --home /opt/zookeeper --system --disabled-password --disabled-login zookeeper && \
     cp /opt/zookeeper/conf/zoo_sample.cfg /opt/zookeeper/conf/zoo.cfg && \
@@ -36,3 +37,6 @@ USER zookeeper
 EXPOSE 2181 2888 3888 9010 8080
 
 CMD ["/opt/zookeeper/bin/zk-init.sh"]
+
+COPY zk-init.sh /opt/zookeeper/bin/
+COPY wait-for-it.sh /
