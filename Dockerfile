@@ -1,21 +1,21 @@
 FROM java:openjdk-8
 MAINTAINER p4km9y
 
-ARG ZK_SERVER_HEAP
-ENV ZK_SERVER_HEAP ${ZK_SERVER_HEAP:-512}
-ARG ZK_CLIENT_HEAP
-ENV ZK_CLIENT_HEAP ${ZK_CLIENT_HEAP:-256}
- 
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
-ENV ZK_LEADER ""
-ENV ZK_SLEEP 0
-
 RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y dnsutils
 
-# >= zookeeper-3.5.2-alpha, might be "current" once
-RUN current=http://www.apache.org/dist/zookeeper/zookeeper-3.5.2-alpha && \
+ARG ZK_SERVER_HEAP
+ENV ZK_SERVER_HEAP ${ZK_SERVER_HEAP:-384}
+ARG ZK_CLIENT_HEAP
+ENV ZK_CLIENT_HEAP ${ZK_CLIENT_HEAP:-256}
+
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+ENV ZK_VERSION 3.5.2-alpha
+ENV ZK_LEADER ""
+ENV ZK_SLEEP 0
+
+RUN current=http://www.apache.org/dist/zookeeper/zookeeper-${ZK_VERSION} && \
     ref=`wget -qO - ${current} | sed -n 's/.*href="\(.*zookeeper-.*\..*gz\)".*/\1/p'` && \
     wget -O - ${current}/${ref} | gzip -dc | tar x -C /opt/ -f - && \
     dir=`ls /opt | grep zookeeper` && \
@@ -33,6 +33,8 @@ RUN adduser --no-create-home --home /opt/zookeeper --system --disabled-password 
     chmod +x /opt/zookeeper/bin/*.sh
 
 USER zookeeper
+
+VOLUME ["/opt/zookeeper/data", "/opt/zookeeper/conf"]
 
 EXPOSE 2181 2888 3888 9010 8080
 

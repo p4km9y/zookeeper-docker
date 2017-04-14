@@ -23,7 +23,7 @@ if [ -n "${ZK}" ]; then
 
   output=`/opt/zookeeper/bin/zkCli.sh -server ${ZK}:2181 get /zookeeper/config | grep ^server | tr '[:space:]' '\n'`
   echo -e "server response: zookeeper config: {\n${output}\n}"
-  
+
   if [ -z "${output}" ]; then
     echo "leader communication error: exitting"
     exit 10
@@ -38,14 +38,14 @@ if [ -n "${ZK}" ]; then
       while read x; do
         id_list+=(`echo $x | cut -d"=" -f1 | cut -d"." -f2`);
       done <<< "${output}"
- 
+
       sorted_id_list=( $(
-        for el in "${id_list[@]}"; do  
+        for el in "${id_list[@]}"; do
           echo "$el";
         done | sort -n) )
- 
+
       echo "sorted node id list: ${sorted_id_list[@]}"
- 
+
       # get the next increasing number from the sequence
       MYID=$((${sorted_id_list[${#sorted_id_list[@]}-1]}+1))
       echo "myid: ${MYID}"
