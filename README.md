@@ -1,14 +1,12 @@
-```bash
-#docker build -t p4km9y/zookeeper -t zookeeper .
-#docker login
-#docker push p4km9y/zookeeper
+* useful shell snippets
 
+```bash
 # cleanup
 # docker images | grep none | tr -s [[:space:]] | cut -d\  -f3 | xargs docker rmi -f
 
 # standalone setup
 # leader
-docker run --name z1 p4km9y/zookeeper 
+docker run --name z1 p4km9y/zookeeper
 # members
 ip=`docker inspect z1 | sed -n 's/^\(.*"IPAddress"\s*:\s*"\(.\+\)".*\)$/\2/p' | uniq`
 docker run --name z2 -e ZK_LEADER=172.17.0.2 p4km9y/zookeeper
