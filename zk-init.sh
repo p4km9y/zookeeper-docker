@@ -5,14 +5,21 @@
 #
 
 ZK=${ZK_LEADER:-$1}
-IPADDRESS=`ip -4 addr show scope global dev eth0 | grep inet | awk '{print \$2}' | cut -d / -f 1`
 
-HOST=`host ${IPADDRESS} | grep -v found | cut -d\  -f 5 | cut -d. -f1`
+IPADDRESSES=`ip -4 addr show scope global dev eth0 | grep inet | awk '{print \$2}' | cut -d / -f 1`
+echo -e "going to resolve host addresses:\n${IPADDRESSES}"
+for ADDR in ${IPADDRESSES}; do
+    HOST=`host ${ADDR} | grep -v found | cut -d\  -f 5 | cut -d. -f1`
+    if [ -n "${HOST}" ]; then
+        break
+    fi
+done
+
 if [ -z "${HOST}" ]; then
-  HOST="${IPADDRESS}"
+  HOST="${ADDR}"
   echo "reverse dns lookup unsuccessful, using ip address"
 fi
-echo "zookeeper host: ${HOST} ip address: ${IPADDRESS}"
+echo "zookeeper host: >${HOST}< ip address: >${ADDR}<"
 
 MYID=1
 echo "zookeeper leader address: ${ZK}"
