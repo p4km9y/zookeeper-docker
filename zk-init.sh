@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# http://container-solutions.com/dynamic-zookeeper-cluster-with-docker/
+# inspired by http://container-solutions.com/dynamic-zookeeper-cluster-with-docker/
 #
 
 ZK=${ZK_LEADER:-$1}

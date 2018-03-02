@@ -1,0 +1,44 @@
+version: "3"
+
+volumes:
+  zk-leader-data:
+  zk-leader-cfg:
+  zk-follower-alpha-data:
+  zk-follower-alpha-cfg:
+  zk-follower-beta-data:
+  zk-follower-beta-cfg:
+
+services:
+  zk-leader:
+    image: p4km9y/zookeeper
+    volumes:
+      - zk-leader-data:/opt/zookeeper/data
+      - zk-leader-cfg:/opt/zookeeper/conf
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.labels.javot.node.id == alpha
+  zk-follower-alpha:
+    image: p4km9y/zookeeper
+    environment:
+      - ZK_LEADER=zk-leader
+      - ZK_SLEEP=10
+    volumes:
+      - zk-follower-alpha-data:/opt/zookeeper/data
+      - zk-follower-alpha-cfg:/opt/zookeeper/conf
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.labels.javot.node.id == beta
+  zk-follower-beta:
+    image: p4km9y/zookeeper
+    environment:
+      - ZK_LEADER=zk-leader
+      - ZK_SLEEP=30
+    volumes:
+      - zk-follower-beta-data:/opt/zookeeper/data
+      - zk-follower-beta-cfg:/opt/zookeeper/conf
+#    deploy:
+#      placement:
+#        constraints:
+#          - node.labels.javot.node.id == gamma
