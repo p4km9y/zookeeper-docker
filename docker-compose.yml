@@ -1,19 +1,15 @@
 version: "3"
 
 volumes:
-  zk-leader-data:
-  zk-leader-cfg:
-  zk-follower-alpha-data:
-  zk-follower-alpha-cfg:
-  zk-follower-beta-data:
-  zk-follower-beta-cfg:
+  zk-leader-volume:
+  zk-follower-alpha-volume:
+  zk-follower-beta-volume:
 
 services:
   zk-leader:
     image: p4km9y/zookeeper
     volumes:
-      - zk-leader-data:/opt/zookeeper/data
-      - zk-leader-cfg:/opt/zookeeper/conf
+      - zk-leader-volume:/opt/zookeeper/volume
 #    deploy:
 #      placement:
 #        constraints:
@@ -24,8 +20,7 @@ services:
       - ZK_LEADER=zk-leader
       - ZK_SLEEP=10
     volumes:
-      - zk-follower-alpha-data:/opt/zookeeper/data
-      - zk-follower-alpha-cfg:/opt/zookeeper/conf
+      - zk-follower-alpha-volume:/opt/zookeeper/volume
 #    deploy:
 #      placement:
 #        constraints:
@@ -36,8 +31,7 @@ services:
       - ZK_LEADER=zk-leader
       - ZK_SLEEP=30
     volumes:
-      - zk-follower-beta-data:/opt/zookeeper/data
-      - zk-follower-beta-cfg:/opt/zookeeper/conf
+      - zk-follower-beta-volume:/opt/zookeeper/volume
 #    deploy:
 #      placement:
 #        constraints:

@@ -24,6 +24,9 @@ MYID=1
 echo "zookeeper leader address: ${ZK}"
 cd /opt/zookeeper
 
+export ZOO_LOG_DIR=/opt/zookeeper/logs
+#export ZOO_LOG4J_PROP=INFO,CONSOLE
+
 if [ -n "${ZK}" ]; then
   if [ "${ZK_SLEEP}" -lt 0 ]; then
     ZK_SLEEP=`shuf -i3-30 -n1`
@@ -80,18 +83,18 @@ if [ -n "${ZK}" ]; then
       /opt/zookeeper/bin/zkServer-initialize.sh --force --myid=${MYID}
 
       echo "starting server for reconfiguration"
-      ZOO_LOG_DIR=/opt/zookeeper/logs ZOO_LOG4J_PROP='INFO,CONSOLE,ROLLINGFILE' /opt/zookeeper/bin/zkServer.sh start
+      /opt/zookeeper/bin/zkServer.sh start
       sleep 5
 
       echo "starting leader reconfiguration"
       /opt/zookeeper/bin/zkCli.sh -server ${ZK}:2181 reconfig -add "server.${MYID}=${HOST}:2888:3888:participant;2181"
       echo "stopping reconfigured server"
-      ZOO_LOG_DIR=/opt/zookeeper/logs /opt/zookeeper/bin/zkServer.sh stop
+      /opt/zookeeper/bin/zkServer.sh stop
     fi
   fi
 
   echo "starting server: ${MYID}"
-  ZOO_LOG_DIR=/opt/zookeeper/logs ZOO_LOG4J_PROP='INFO,CONSOLE,ROLLINGFILE' /opt/zookeeper/bin/zkServer.sh start-foreground
+  exec /opt/zookeeper/bin/zkServer.sh start-foreground
 else
   if [ "${DYN}" -lt 2 ]; then
     echo "initializing leader"
@@ -100,5 +103,6 @@ else
     /opt/zookeeper/bin/zkServer-initialize.sh --force --myid=${MYID}
   fi
   echo "starting leading server"
-  ZOO_LOG_DIR=/opt/zookeeper/logs ZOO_LOG4J_PROP='INFO,CONSOLE,ROLLINGFILE' /opt/zookeeper/bin/zkServer.sh start-foreground
+  exec /opt/zookeeper/bin/zkServer.sh start-foreground
 fi
+
